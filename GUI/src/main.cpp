@@ -5,6 +5,7 @@
 // #include "MyOS.hpp"
 
 MyDisplay display; 
+HomePanel homePanel;
 
 
 void setup(void)
@@ -21,6 +22,10 @@ void idle() {
 
 void loop(void)
 {
+    if (display.refresh) {
+        display.refresh = 0; // Reset the refresh flag
+        display.drawPanel(homePanel); // Draw the panel on the display
+    }
     Adafruit_GFX_Button &on_btn = display.on_btn;
     Adafruit_GFX_Button &off_btn = display.off_btn;
     MCUFRIEND_kbv &tft = display.getTft(); // Referencja do obiektu wyświetlacza
@@ -42,6 +47,7 @@ void loop(void)
         off_btn.drawButton(true);
         tft.fillRect(40, 80, 160, 80, RED);
     }
+    Serial.println("Display initialized.");
 }
 
 

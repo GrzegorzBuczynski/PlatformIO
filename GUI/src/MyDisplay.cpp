@@ -17,25 +17,19 @@ void MyDisplay::begin()
     _tft.begin(ID);
     _tft.setRotation(0);            //PORTRAIT
     _tft.fillScreen(BLACK);
-
     _ts = TouchScreen(XP, YP, XM, YM, 300);
+    refresh = 1;
 }
 
 
 void MyDisplay::drawPanel(Panel &panel)
 {
-    // MCUFRIEND_kbv &tft = _tft; // Reference to the display object
+    on_btn.initButton(&_tft,  60, 200, 100, 40, WHITE, CYAN, BLACK, "ON", 2);
+    off_btn.initButton(&_tft, 180, 200, 100, 40, WHITE, CYAN, BLACK, "OFF", 2);
+    on_btn.drawButton(false);
+    off_btn.drawButton(false);
+    _tft.fillRect(40, 80, 160, 80, RED);
 
-    // tft.setRotation(panel.get_rotation());
-    // tft.setAddrWindow(0, 0, _width - 1, _height - 1);
-    // if (panel.hasWallpaper())
-    //     tft.drawRGBBitmap(0, 0, panel.getWallpaper(), 64, 64);
-    // else
-    //     tft.fillScreen(panel.get_backgroundColor());
-    // tft.setTextColor(panel.get_foregroundColor());
-    // tft.setTextSize(2);
-    // tft.setCursor(0, 0);
-    // tft.print("Hello, World!");
 }
 
 bool MyDisplay::Touch_getXY(void)

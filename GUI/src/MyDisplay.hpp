@@ -19,7 +19,8 @@ private:
     MCUFRIEND_kbv _tft;
     TouchScreen _ts; // Touchscreen object
     
-public:
+    public:
+    uint8_t refresh;
     Adafruit_GFX_Button on_btn, off_btn;
     MyDisplay();
     ~MyDisplay();
