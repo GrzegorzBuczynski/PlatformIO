@@ -1,0 +1,28 @@
+#pragma once
+
+
+#define BLACK   0x0000
+#define BLUE    0x001F
+#define RED     0xF800
+#define GREEN   0x07E0
+#define CYAN    0x07FF
+#define MAGENTA 0xF81F
+#define YELLOW  0xFFE0
+#define WHITE   0xFFFF
+#define ORANGE  0xFD20
+#define PURPLE  0x8010
+#define BROWN   0xBC40
+#define GREY    0x7BEF
+#define LIGHTGREY 0xC618
+#define DARKGREY 0x7BEF
+#define LIGHTBLUE 0x7BFF
+#define LIGHTGREEN 0x7FE0
+#define LIGHTRED 0xF81F
+#define LIGHTCYAN 0x7FFF
+#define LIGHTMAGENTA 0xFFDF
+#define LIGHTYELLOW 0xFFFF
+#define LIGHTORANGE 0xFF7F
+#define LIGHTPURPLE 0x7BFF
+#define LIGHTBROWN 0x7BFF
+#define LIGHTGREY 0x7BFF
+#define LIGHTDARKGREY 0x7BFF

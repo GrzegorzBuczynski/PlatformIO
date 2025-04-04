@@ -1,11 +1,6 @@
 #include "MyOS.hpp"
 #include "Panel.hpp"
-// #include <rpnCalc.h>
-// #include <breakout.h>
-// #include <iconEdit.h>
-//#include <starTrek.h>
-//#include "testAppPanel.h"
-// #include "homeScr.h"
+
 
 #define BEEP_PIN     14                      // The digital pin choosen for the beeper.
 #define SCREEN_PIN   25                      // The ananlog pin choosen for the screen backlight.
@@ -17,31 +12,19 @@ char panelFolder[]   = "/system/appFiles/";  // Where we decided to store the ap
 // ************** MyOS **************
 // **************************************
 
-MyDisplay::MyDisplay(int width, int height, uint8_t *videoBuffer) : _width(width), _height(height), _videoBuffer(videoBuffer), _sizeOfVideoBuffer(width * height)
-{
-}
-MyDisplay::~MyDisplay()
-{
-    // Cleanup if needed
-}
-
-void MyDisplay::draw()
-{
-    if (_Panel.hasWallpaper())
-        tft.drawRGBBitmap(0, 0, _Panel.getWallpaper(), 64, 64);
-    else
-        tft.fillScreen(_Panel.get_backgroundColor());
-    tft.setTextColor(_Panel.get_foregroundColor());
-    tft.setTextSize(2);
-    tft.setCursor(0, 0);
-    tft.print("Hello, World!");
-
-}
-
-// MyOS::MyOS(void) { }
 
 
-// MyOS::~MyOS(void) {  }
+MyOS::MyOS(void) {
+    display.begin(); // Initialize the display
+    display.setRotation(0); // Set rotation to 0 by default
+    panel = new HomePanel(432, 240); // Initialize the home panel
+    // display.drawPanel(*panel); // Draw the home panel on the display
+ }
+
+
+MyOS::~MyOS(void) { 
+    delete panel; // Clean up the panel object
+ }
 
 
 // // The hardware is online, do hookups.
