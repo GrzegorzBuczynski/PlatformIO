@@ -4,13 +4,13 @@
 #include "Panel.hpp"
 // #include "MyOS.hpp"
 
-MyDisplay* displayPointer = nullptr; // Globalny wskaźnik, początkowo ustawiony na nullptr
+MyDisplay display; 
 
 
 void setup(void)
 {
     Serial.begin(9600);
-    displayPointer = new MyDisplay(); // Dynamiczna alokacja obiektu
+    display.begin(); // Dynamiczna alokacja obiektu
     Serial.println("Display initialized.");
 }
 
@@ -21,10 +21,6 @@ void idle() {
 
 void loop(void)
 {
-    if (!displayPointer) return; // Upewnij się, że wskaźnik nie jest pusty
-
-    MyDisplay &display = *displayPointer; // Tworzymy referencję do obiektu MyDisplay
-
     Adafruit_GFX_Button &on_btn = display.on_btn;
     Adafruit_GFX_Button &off_btn = display.off_btn;
     MCUFRIEND_kbv &tft = display.getTft(); // Referencja do obiektu wyświetlacza

@@ -16,7 +16,7 @@ char panelFolder[]   = "/system/appFiles/";  // Where we decided to store the ap
 
 MyOS::MyOS(void) {
     display.begin(); // Initialize the display
-    display.setRotation(0); // Set rotation to 0 by default
+    // display.setRotation(0); // Set rotation to 0 by default
     panel = new HomePanel(432, 240); // Initialize the home panel
     // display.drawPanel(*panel); // Draw the home panel on the display
  }
