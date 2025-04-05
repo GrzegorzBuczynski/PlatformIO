@@ -22,13 +22,43 @@ void MyDisplay::begin()
 }
 
 
-void MyDisplay::drawPanel(Panel &panel)
+void MyDisplay::drawTemplate()
 {
     on_btn.initButton(&_tft,  60, 200, 100, 40, WHITE, CYAN, BLACK, "ON", 2);
     off_btn.initButton(&_tft, 180, 200, 100, 40, WHITE, CYAN, BLACK, "OFF", 2);
     on_btn.drawButton(false);
     off_btn.drawButton(false);
     _tft.fillRect(40, 80, 160, 80, RED);
+
+}
+
+void MyDisplay::drawPanel(Panel *panel1)
+{
+    Panel &panel = *panel1; // Dereference the pointer to get the actual panel object
+    for ( Task &task : panel.task) {
+        switch (task.type) {
+            case TaskType::Text:
+                _tft.setTextColor(task.value.text->color, task.value.text->bgColor);
+                _tft.setCursor(task.value.text->x, task.value.text->y);
+                _tft.setTextSize(task.value.text->fontSize);
+                _tft.print(*(task.value.text->text));
+                break;
+            case TaskType::Color:
+                _tft.fillScreen(task.value.color);
+                break;
+            case TaskType::Image:
+                // Implement image drawing logic here
+                break;
+            // case TaskType::Panel:
+            //     drawPanel(*(task.value.panel)); // Recursive call to draw nested panels
+                // break;
+            case TaskType::Button:
+                // task.value.button->drawButton();
+                break;
+            default:
+                break;
+        }
+    }
 
 }
 

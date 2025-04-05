@@ -15,18 +15,20 @@ const int TS_LEFT=882,TS_RT=155,TS_TOP=57,TS_BOT=928;
 
 class MyDisplay
 {
+public:
+    Adafruit_GFX_Button on_btn, off_btn;
 private:
     MCUFRIEND_kbv _tft;
     TouchScreen _ts; // Touchscreen object
     
     public:
     uint8_t refresh;
-    Adafruit_GFX_Button on_btn, off_btn;
     MyDisplay();
     ~MyDisplay();
     void begin(); // Initialize the display
     uint16_t getID() { return _tft.readID(); } // Get the display ID
-    void drawPanel(Panel &_Panel);
+    void drawPanel(Panel *_Panel1);
+    void drawTemplate();
     // void drawDrawable(Drawable *drawable);
     // void removeDrawable(Drawable *drawable);
     bool Touch_getXY(void);
