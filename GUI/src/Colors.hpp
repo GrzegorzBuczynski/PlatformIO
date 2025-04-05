@@ -13,8 +13,8 @@
 #define PURPLE  0x8010
 #define BROWN   0xBC40
 #define GREY    0x7BEF
-#define LIGHTGREY 0xC618
 #define DARKGREY 0x7BEF
+#define LIGHTGREY 0xC618
 #define LIGHTBLUE 0x7BFF
 #define LIGHTGREEN 0x7FE0
 #define LIGHTRED 0xF81F

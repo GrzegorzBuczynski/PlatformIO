@@ -27,8 +27,8 @@ private:
     void begin(); // Initialize the display
     uint16_t getID() { return _tft.readID(); } // Get the display ID
     void drawPanel(Panel &_Panel);
-    void drawDrawable(Drawable *drawable);
-    void removeDrawable(Drawable *drawable);
+    // void drawDrawable(Drawable *drawable);
+    // void removeDrawable(Drawable *drawable);
     bool Touch_getXY(void);
     int pixel_x, pixel_y; // Touch coordinates
     MCUFRIEND_kbv &getTft() { return _tft; } // Get reference to the display object
