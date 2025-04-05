@@ -22,7 +22,7 @@ struct Panel;
 // struct Button;
 
 union TaskValue {
-    String* text;
+    TextSprite* text;
     uint16_t color;
     ImageData* image;
     Panel* panel;
@@ -39,7 +39,7 @@ public:
     Task();
     ~Task();
 
-    void setText(String* ptr);
+    void setText(TextSprite* ptr);
     void setColor(uint16_t c);
     void setImage(ImageData* img);
     void setPanel(Panel* p);

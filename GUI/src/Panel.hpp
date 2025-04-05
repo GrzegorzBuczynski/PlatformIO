@@ -13,10 +13,9 @@ class Panel
 };
 
 
-// class HomePanel : public Panel
-// {
-// private:
-// public:
-//     HomePanel(); // Default constructor
-//     ~HomePanel();
-// };
+class HomePanel : public Panel
+{
+public:
+    HomePanel(); // Default constructor
+    ~HomePanel();
+};

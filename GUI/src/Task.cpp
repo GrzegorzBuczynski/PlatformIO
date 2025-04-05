@@ -8,7 +8,7 @@ Task::~Task() {
     clear(); // Clean up resources if needed
 }
 
-void Task::setText(String* ptr) {
+void Task::setText(TextSprite* ptr) {
     clear();
     value.text = ptr;
     type = TaskType::Text;
