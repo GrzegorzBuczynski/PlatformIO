@@ -5,6 +5,8 @@
 #include "Colors.hpp"
 #include <TouchScreen.h>
 #include <Adafruit_GFX.h>
+
+
 #define MINPRESSURE 200
 #define MAXPRESSURE 1000
 
@@ -17,11 +19,11 @@ class MyDisplay
 {
 public:
     Adafruit_GFX_Button on_btn, off_btn;
-private:
     MCUFRIEND_kbv _tft;
+    void drawImageFromProgmem(int x, int y, int width, int height, const uint16_t* progmemData);
+
     TouchScreen _ts; // Touchscreen object
     
-    public:
     uint8_t refresh;
     MyDisplay();
     ~MyDisplay();
@@ -37,12 +39,4 @@ private:
 };
 
 
-
-
-class Device
-{
-public:
-private:
-    Device(); // Private constructor to prevent instantiation
-};
 

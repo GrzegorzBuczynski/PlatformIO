@@ -1,11 +1,16 @@
 #pragma once
 #include <Arduino.h>
 
-struct ImageData
+class ImageData
 {
-    const uint8_t *data;
-    int width;
-    int height;
+public:
+    uint16_t x;
+    uint16_t y;
+    uint16_t width;
+    uint16_t height;
+    const uint16_t *data;
+
+    ImageData(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const uint16_t *data);
 };
 
 struct TextSprite

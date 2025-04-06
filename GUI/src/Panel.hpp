@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 #include "Task.hpp"
+#include "bitmap_RGB.h"
+
 
 
 class Panel

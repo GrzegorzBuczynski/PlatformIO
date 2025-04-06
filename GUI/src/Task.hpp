@@ -11,7 +11,7 @@ enum class TaskType {
     None,
     Text,
     Color,
-    Image,
+    Imagee,
     Panel,
     Button
 };
@@ -43,6 +43,7 @@ public:
     void setText(TextSprite* ptr);
     void setColor(uint16_t c);
     void setImage(ImageData* img);
+    void setImage();
     void setPanel(Panel* p);
     void setButton(Button* b);
     void clear();

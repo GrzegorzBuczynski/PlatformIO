@@ -115,21 +115,21 @@ void loop(void)
     uint8_t sram[SZ];
     memcpy_P(sram, tractor_128x64, SZ);
 
-    tft.fillScreen(BLACK);
-    y = 0; t = millis();
-    tft.drawBitmap(x, y, tractor_128x64, 128, 64, BLUE);
-    msg_time(0, y + 66, F("drawBitmap() transparent flash "), t);
-    y = 80; t = millis();
-    tft.drawBitmap(x, y, tractor_128x64, 128, 64, RED, YELLOW);
-    msg_time(0, y + 66, F("drawBitmap() background flash "), t);
-    y = 160; t = millis();
-    tft.fillRect(x, y, w, h, GREY);
-    tft.drawBitmap(x, y, sram, 128, 64, GREEN);
-    msg_time(0, y + 66, F("drawBitmap() fill bgd SRAM "), t);
-    y = 240; t = millis();
-    showbgd(x, y, tractor_128x64, 128, 64, MAGENTA, YELLOW);
-    msg_time(0, y + 66, F("pushColors() background flash "), t);
-    delay(10000);
+    // tft.fillScreen(BLACK);
+    // y = 0; t = millis();
+    // tft.drawBitmap(x, y, tractor_128x64, 128, 64, BLUE);
+    // msg_time(0, y + 66, F("drawBitmap() transparent flash "), t);
+    // y = 80; t = millis();
+    // tft.drawBitmap(x, y, tractor_128x64, 128, 64, RED, YELLOW);
+    // msg_time(0, y + 66, F("drawBitmap() background flash "), t);
+    // y = 160; t = millis();
+    // tft.fillRect(x, y, w, h, GREY);
+    // tft.drawBitmap(x, y, sram, 128, 64, GREEN);
+    // msg_time(0, y + 66, F("drawBitmap() fill bgd SRAM "), t);
+    // y = 240; t = millis();
+    // showbgd(x, y, tractor_128x64, 128, 64, MAGENTA, YELLOW);
+    // msg_time(0, y + 66, F("pushColors() background flash "), t);
+    // delay(10000);
 
     tft.fillScreen(BLACK);
     y = 0; t = millis();
@@ -150,30 +150,30 @@ void loop(void)
     tft.fillRect(x, y, w, h, GREY);
     tft.drawRGBBitmap(x, y, marilyn_64x64, magnify_inv_64x64, 64, 64);
     msg_time(0, y + 66, F("drawRGBBitmap() with mask "), t);
-    delay(10000);
+    delay(100000);
 
-#if !LOWFLASH
-    tft.fillScreen(BLACK);
-    y = 0; t = millis();
-    tft.drawRGBBitmap(x, y, tractor10_96x64, 96, 64);
-    msg_time(0, y + 66, "drawRGBBitmap() flash ", t);
-    y = 80; t = millis();
-    tft.setAddrWindow(x, y, x + 96 - 1, y + 64 - 1);
-    tft.pushColors((const uint8_t*)tractor10_96x64, 96 * 64, 1, false);
-    tft.setAddrWindow(0, 0, tft.width() - 1, tft.height() - 1);
-    msg_time(0, y + 66, F("pushColors() flash "), t);
-    y = 160; t = millis();
-    w = 96;
-    tft.fillRect(x, y, w, h, GREY);
-    tft.drawRGBBitmap(x, y, tractor10_96x64, camera_96x64, 96, 64);
-    msg_time(0, y + 66, F("drawRGBBitmap() with mask "), t);
-    y = 240; t = millis();
-    w = 96;
-    tft.fillRect(x, y, w, h, GREY);
-    tft.drawRGBBitmap(x, y, tractor10_96x64, camera_inv_96x64, 96, 64);
-    msg_time(0, y + 66, F("drawRGBBitmap() with mask "), t);
-    delay(10000);
-#endif
+// #if !LOWFLASH
+//     tft.fillScreen(BLACK);
+//     y = 0; t = millis();
+//     tft.drawRGBBitmap(x, y, tractor10_96x64, 96, 64);
+//     msg_time(0, y + 66, "drawRGBBitmap() flash ", t);
+//     y = 80; t = millis();
+//     tft.setAddrWindow(x, y, x + 96 - 1, y + 64 - 1);
+//     tft.pushColors((const uint8_t*)tractor10_96x64, 96 * 64, 1, false);
+//     tft.setAddrWindow(0, 0, tft.width() - 1, tft.height() - 1);
+//     msg_time(0, y + 66, F("pushColors() flash "), t);
+//     y = 160; t = millis();
+//     w = 96;
+//     tft.fillRect(x, y, w, h, GREY);
+//     tft.drawRGBBitmap(x, y, tractor10_96x64, camera_96x64, 96, 64);
+//     msg_time(0, y + 66, F("drawRGBBitmap() with mask "), t);
+//     y = 240; t = millis();
+//     w = 96;
+//     tft.fillRect(x, y, w, h, GREY);
+//     tft.drawRGBBitmap(x, y, tractor10_96x64, camera_inv_96x64, 96, 64);
+//     msg_time(0, y + 66, F("drawRGBBitmap() with mask "), t);
+//     delay(10000);
+// #endif
 }
 
 

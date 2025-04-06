@@ -23,13 +23,13 @@ void Task::setColor(uint16_t c) {
 void Task::setImage(ImageData* img) {
     clear();
     value.image = img;
-    type = TaskType::Image;
+    type = TaskType::Imagee;
 }
 
-void Task::setPanel(Panel* p) {
+void Task::setImage() {
     clear();
-    value.panel = p;
-    type = TaskType::Panel;
+    value.image = nullptr; // Set to nullptr or handle as needed
+    type = TaskType::Imagee;
 }
 
 void Task::setButton(Button* b) {
@@ -37,6 +37,12 @@ void Task::setButton(Button* b) {
     value.button = b;
     type = TaskType::Button;
 }
+void Task::setPanel(Panel* p) {
+    clear();
+    value.panel = p;
+    type = TaskType::Panel;
+}
+
 
 void Task::clear() {
     value.text = nullptr; // reset dowolnego wskaźnika
