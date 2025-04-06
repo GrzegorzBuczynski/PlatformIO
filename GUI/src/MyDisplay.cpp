@@ -53,7 +53,9 @@ void MyDisplay::drawPanel(Panel *panel1)
             //     drawPanel(*(task.value.panel)); // Recursive call to draw nested panels
                 // break;
             case TaskType::Button:
-                // task.value.button->drawButton();
+                Button &btn = *(task.value.buttonData); // Dereference the pointer to create a reference
+                btn.initButton(&_tft, btn._x, btn._y, btn._width, btn._height, btn._outlinecolor, btn._colorOn, btn._textColor, btn._label->c_str(), 2);
+                btn.drawButton(false);
                 break;
             default:
                 break;

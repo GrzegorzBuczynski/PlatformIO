@@ -27,6 +27,7 @@ union TaskValue {
     ImageData* image;
     Panel* panel;
     Button* button;
+    Button* buttonData;
 
     TaskValue() : text(nullptr) {}
 };

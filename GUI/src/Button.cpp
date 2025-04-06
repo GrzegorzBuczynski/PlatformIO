@@ -9,8 +9,8 @@ Button::Button() : _x(lastX), _y(lastY), _width(50), _height(25), _label(new Str
     lastY += 10;
 }
 
-Button::Button(uint16_t x, uint16_t y, uint16_t w, uint16_t h, String *label, uint16_t colorOn, uint16_t colorOff, uint16_t textColor, uint16_t fontSize)
-: _x(x), _y(y), _width(w), _height(h), _label(label), _colorOn(colorOn), _colorOff(colorOff), _textColor(textColor), _fontSize(fontSize), _pressed(false), prevPressed(false), _action(Button::ActionType::Idle) {}
+Button::Button(uint16_t x, uint16_t y, uint16_t w, uint16_t h, String *label, uint16_t outlinecolor, uint16_t colorOn, uint16_t colorOff, uint16_t textColor, uint8_t fontSize)
+: _x(x), _y(y), _width(w), _height(h), _label(label), _outlinecolor(outlinecolor), _colorOn(colorOn), _colorOff(colorOff), _textColor(textColor), _fontSize(fontSize), _pressed(false), prevPressed(false), _action(Button::ActionType::Idle) {}
 
 Button::~Button() {
     // Destructor implementation (if needed)
