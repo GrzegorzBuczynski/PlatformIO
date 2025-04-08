@@ -11,16 +11,18 @@
 MCUFRIEND_kbv tft;
 
 // TouchScreen piny Mega
-#define YP A1  // Must be an analog pin
+#define YP A3  // Must be an analog pin
 #define XM A2  // Must be an analog pin
-#define YM 7
-#define XP 6
+#define YM 9
+#define XP 8
 
 // Kalibracja (możesz zmienić po testach)
 #define TS_MINX 120
 #define TS_MAXX 900
 #define TS_MINY 70
 #define TS_MAXY 920
+
+const int TS_LEFT=882,TS_RT=155,TS_TOP=57,TS_BOT=928;
 
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 TSPoint tp;
@@ -55,8 +57,8 @@ TSPoint getTouch() {
   pinMode(YP, OUTPUT);
   pinMode(XM, OUTPUT);
   if (p.z > MINPRESSURE && p.z < MAXPRESSURE) {
-    int x = map(p.y, TS_MINY, TS_MAXY, 0, tft.width());
-    int y = map(p.x, TS_MINX, TS_MAXX, 0, tft.height());
+    int x = map(p.x, TS_LEFT, TS_RT, 0, tft.width());
+    int y = map(p.y, TS_TOP, TS_BOT, 0, tft.height());
     return TSPoint(x, y, 1);
   }
   return TSPoint(-1, -1, 0);
@@ -65,22 +67,34 @@ TSPoint getTouch() {
 GBUButton* currentLayout = nullptr;
 
 const char* labels[] = {
+  "<--",
   "RADIO",
   "NAVI",
   "PARAMS",
   "KAMERA",
-  "<--"
+  "USTAWIENIA",
+  "INFO",
+  "INNE",
+  "TEST",
+  NULL
 };
+
 uint16_t colors[] = {
   RED,
   BLUE,
   GREEN,
   YELLOW,
-  CYAN
+  CYAN,
+  MAGENTA,
+  ORANGE,
+  GREEN,
+  PURPLE
 };
 
+
+
 void updateLayout() {
-  currentLayout = createButtonGrid(labels, colors);
+  currentLayout = createButtonGrid(9, labels, colors);
 }
 
 void drawMainMenu() {
@@ -88,9 +102,6 @@ void drawMainMenu() {
   updateLayout();
   GBUButton* btn = currentLayout;
   Serial.println("Drawing main menu...");
-  Serial.print("Button address: ");
-  Serial.println((uint32_t)btn, HEX);  // Debugging: wypisz adres przycisku
-  // debugButton(*btn);  // Debugging: wypisz szczegóły przycisku
   while (btn != nullptr) {
     drawButton(*btn, tft);  // Używamy wskaźnika do przycisku
     btn = btn->next;
