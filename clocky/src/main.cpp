@@ -381,15 +381,15 @@ void setup()
     init_pattern_style();
 
     // Setup network and time
-    if (!setupWiFi())
-    {
-        log_w("%s: Continuing without WiFi connection", TAG);
-    }
+    // if (!setupWiFi())
+    // {
+    //     log_w("%s: Continuing without WiFi connection", TAG);
+    // }
 
-    if (!setupTime())
-    {
-        log_w("%s: Continuing without time sync", TAG);
-    }
+    // if (!setupTime())
+    // {
+    //     log_w("%s: Continuing without time sync", TAG);
+    // }
 
     init_parent_control();
     create_settings_button();
@@ -429,16 +429,16 @@ void loop()
     }
 
     // Optional: Monitor WiFi connection and attempt reconnection if needed
-    if (WiFi.status() != WL_CONNECTED)
-    {
-        static unsigned long last_reconnect_attempt = 0;
-        if (now - last_reconnect_attempt >= 60000)
-        { // Try every minute
-            log_w("%s: WiFi disconnected, attempting reconnection", TAG);
-            setupWiFi();
-            last_reconnect_attempt = now;
-        }
-    }
+    // if (WiFi.status() != WL_CONNECTED)
+    // {
+    //     static unsigned long last_reconnect_attempt = 0;
+    //     if (now - last_reconnect_attempt >= 60000)
+    //     { // Try every minute
+    //         log_w("%s: WiFi disconnected, attempting reconnection", TAG);
+    //         setupWiFi();
+    //         last_reconnect_attempt = now;
+    //     }
+    // }
     check_unlock_timeout();
 
     // Small delay to prevent watchdog issues
