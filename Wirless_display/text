@@ -1,0 +1,5 @@
+
+idf.py -p COM11 flash
+
+
+python -m esptool write_flash -z 0x0 "C:\pełna_ścieżka\bootloader.bin" 0x8000 "C:\pełna_ścieżka\partitions.bin" 0x10000 "C:\pełna_ścieżka\GetChipID.ino.bin"
