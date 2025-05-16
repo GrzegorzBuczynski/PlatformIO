@@ -166,7 +166,7 @@ void setup() {
 }
 
 void loop() {
-  tp = getTouch();
+  // tp = getTouch();
   // if (tp.z > 0) {
   //   switch (currentScreen) {
   //     case MAIN_MENU:
