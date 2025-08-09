@@ -1,0 +1,45 @@
+
+
+Poniżej precyzyjnie co zmienia wywołanie lv_display_set_rotation() i jakie skutki uboczne możesz widzieć w drugim projekcie.
+
+Zmiany / stany wewnętrzne LVGL (LVGL 9.x):
+
+Pole rotation w strukturze lv_display_t (disp->rotation) – jedyny bezpośredni parametr ustawiany przez API.
+Logika transformacji współrzędnych: wszystkie późniejsze obliczenia pozycji (układanie layoutu, align, transformacja area w render pipeline) uwzględniają rotation.
+Transformacja współrzędnych wejściowych (touch / pointer): przed przekazaniem do obiektów LVGL współrzędne są obracane odwrotnie aby dopasować do logicznego układu ekranu.
+Interpretacja szerokości/wysokości przy wyliczaniu obszarów rysowania: przy rotacji 90/270 następuje zamiana “logicznej” osi (x,y) – LVGL wykonuje to w warstwie rysowania, ale:
+lv_display_get_horizontal_resolution(disp) i lv_display_get_vertical_resolution(disp) wciąż zwracają wartości fizyczne (tak jak zostały skonfigurowane przy inicjalizacji)
+Nie są automatycznie “zamieniane” w strukturze – rotacja działa przez transformację współrzędnych, a nie przez przepinanie parametrów rozdzielczości.
+Inwalidacja ekranu: zmiana rotacji wywołuje pełną inwalidację (efektywnie wymusza pełne przerysowanie przy następnym odświeżeniu).
+Bufory rysujące (draw buffers) NIE są realokowane ani zamieniane – dalej używasz tych samych wskaźników (tylko inaczej interpretowany jest zapis pikseli podczas fazy renderowania).
+Flush callback dostaje już obszary (lv_area_t) w “fizycznych” współrzędnych ekranu po transformacji – jeśli wcześniej sam robiłeś sprzętową rotację (np. zmieniałeś MADCTL) to teraz następuje PODWÓJNA rotacja → obraz przekręcony / lustrzany.
+Czego lv_display_set_rotation NIE zmienia:
+
+Nie zmienia driver->flush_cb
+Nie zmienia wskaźników buforów ani ich rozmiaru
+Nie zmienia formatu koloru, alignmentu, stylów, fontów
+Nie aktualizuje żadnych Twoich własnych globali gdzie mogłeś skopiować wymiary ekranu “na sztywno”
+Nie przełącza hardware (np. rejestru kontrolera LCD) – to nadal Twoja odpowiedzialność jeśli chcesz sprzętowo obracać.
+Typowe “niezamierzone efekty” i przyczyny:
+
+Podwójna rotacja: już ustawiasz orientację w sterowniku LCD (MADCTL, Memory Access Control) + dodatkowo lv_display_set_rotation -> efekt 180° lub niespójne osie. Rozwiązanie: zdecyduj czy robisz rotację w LVGL (software) czy w kontrolerze (hardware). Tylko jedna warstwa.
+Błędny touch: sterownik dotyku nadal mapuje surowe X/Y do oryginalnej orientacji. Jeśli wcześniej odwracałeś osie ręcznie, usuń to i zostaw LVGL. Albo jeśli rotację robi hardware (MADCTL) a w LVGL rotation=0 – wtedy transformację zrób tylko w kodzie dotyku.
+Artefakty / przesunięte linie przy DMA: Flush callback zakłada, że area->x2 >= area->x1 i rośnie w konkretnym kierunku, albo wycina prostokąty o pełnej szerokości; po rotacji 90/270 obszary mają inny kształt niż oczekiwany przez prosty kod wysyłający cały pas ekranu. Trzeba obsłużyć dowolny prostokąt.
+Złe buforowanie “na skróty”: Kod w flush ignoruje przekazany area i zawsze wysyła cały bufor – przy rotacji 90/270 może wyświetlać nienadpisane (stare) fragmenty, bo LVGL w trybie partial flush liczył, że zaktualizujesz tylko dany prostokąt.
+Własne makra WIDTH/HEIGHT: Używasz stałych np. LCD_W=800, LCD_H=480 do ręcznych obliczeń pozycji/obszarów w callbackach – po rotacji 90° logiczny układ ma 480x800, ale Ty dalej liczysz 800x480 -> przesunięcia.
+Przyspieszająca ścieżka rysowania: Jeśli w flush robisz konwersję / kopię / kolor fill zakładając liniową pamięć po rzędzie (row-major) i jednorodną kolejność linii, przy 90/270 rotacja software’owa LVGL może skutkować inną kolejnością pikseli w mapie (w zależności od configu rotacji). Sprawdź czy LVGL generuje już obróconą mapę (najczęściej tak) – wtedy Twoja mechanika “obracania” w flush jest zbędna i psuje obraz.
+Jak zdiagnozować:
+
+Włącz logi: w lv_conf.h ustaw LV_USE_LOG 1 i LV_LOG_LEVEL LV_LOG_LEVEL_INFO (lub TRACE). Powinien pojawić się log o zmianie rotacji.
+Tymczasowo ustaw rotation na stałe (np. tylko 90° w setup) i sprawdź czy problem identyczny – wykluczysz kwestię dynamicznego kliknięcia.
+W flush wypisz area->x1,y1,x2,y2 dla pierwszych kilku wywołań przed i po rotacji – zobacz czy obsługujesz te zakresy poprawnie.
+Wyłącz własne modyfikacje MADCTL (jeśli są) i sprawdź obraz – jeśli się naprawiło, to był podwójny obrót.
+Checklist naprawy: [ ] Usuń hardware rotation jeśli używasz lv_display_set_rotation. [ ] W flush używaj dokładnie przekazanego area (kalkulacja szer = area->x2 - area->x1 + 1, wys = area->y2 - area->y1 + 1). [ ] Nie cache’uj szer/wys logicznych – gdy potrzebujesz, pytaj lv_obj_get_width(lv_screen_active()) / lv_obj_get_height(). [ ] Jeśli masz transformację dotyku – skoryguj ją lub wyłącz gdy LVGL obraca. [ ] Dodaj ochronę przed zmianą rotacji w trakcie aktywnego DMA (flaga busy).
+
+Szybki test “czy to podwójna rotacja”:
+
+Ustaw na stałe lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_0); i NIE zmieniaj przyciskiem.
+Skonfiguruj kontroler LCD w docelowej orientacji (np. portrait).
+Jeśli obraz poprawny → używaj tylko hardware rotation i usuń przycisk (lub przycisk niech tylko zmienia hardware).
+Jeśli obraz błędny dopiero po lv_display_set_rotation !=0 → flush lub touch nie obsługuje poprawnie transformacji.
+Jeśli podasz fragment flush callback / sterownika i to co “źle wygląda”, mogę wskazać dokładnie gdzie poprawić. Daj znać.

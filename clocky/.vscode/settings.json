@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "esp_lcd_panel_ops.h": "c",
+        "esp32_smartdisplay.h": "c"
+    }
+}

@@ -1,0 +1,72 @@
+Przeniesienie funkcji obracania – plan:
+
+Wydziel potrzebne elementy (prototyp, handler zdarzenia, utworzenie przycisku).
+Dostosuj do projektu z podwójnym buforowaniem w PSRAM + DMA (synchronizacja z flush).
+Wstaw pliki / kod do drugiego projektu i zarejestruj przycisk po inicjalizacji LVGL.
+(Opcjonalnie) Adaptacja gdy obrót ma być sprzętowy (MADCTL) zamiast programowego LVGL.
+Test i kontrola edge‑case (obrót w trakcie aktywnego DMA, relayout).
+================================ Minimalny wyizolowany kod
+Plik rotation.h: #ifndef ROTATION_H #define ROTATION_H #include "lvgl.h" #ifdef __cplusplus extern "C" { #endif void rotation_button_create(lv_obj_t *parent); #ifdef __cplusplus } #endif #endif
+
+Plik rotation.c: #include "rotation.h"
+
+// (opcjonalnie) flaga synchronizacji z DMA static volatile bool dma_busy = false;
+
+void rotation_set_dma_busy(bool busy) { dma_busy = busy; }
+
+static void rotation_btn_event_cb(lv_event_t *e) { if(lv_event_get_code(e) != LV_EVENT_CLICKED) return; if(dma_busy) { // Możesz: zapisać żądanie i wykonać po zakończeniu DMA return; } lv_display_t *disp = lv_display_get_default(); lv_display_rotation_t next = (lv_display_rotation_t)((lv_disp_get_rotation(disp) + 1) % (LV_DISPLAY_ROTATION_270 + 1)); lv_display_set_rotation(disp, next); // Wymuś natychmiastowe odświeżenie (przy dużych buforach można pominąć) lv_refr_now(disp); }
+
+void rotation_button_create(lv_obj_t *parent) { lv_obj_t *btn = lv_btn_create(parent); lv_obj_set_size(btn, 48, 48); lv_obj_align(btn, LV_ALIGN_BOTTOM_RIGHT, -8, -8); lv_obj_t *lbl = lv_label_create(btn); lv_label_set_text(lbl, "⟳"); // lub prosty tekst: "R" lv_obj_center(lbl); lv_obj_add_event_cb(btn, rotation_btn_event_cb, LV_EVENT_CLICKED, NULL); }
+
+(Jeśli wolisz zostać przy stylu SquareLine) W pliku ui_events.h dodaj (jeśli nie ma): void OnRotateClicked(lv_event_t * e);
+
+W pliku ui_events (lub main.cpp jak w źródle): void OnRotateClicked(lv_event_t * e) { lv_display_t *disp = lv_display_get_default(); lv_display_rotation_t next = (lv_display_rotation_t)((lv_disp_get_rotation(disp) + 1) % (LV_DISPLAY_ROTATION_270 + 1)); lv_display_set_rotation(disp, next); lv_refr_now(disp); }
+
+A w screen_init (tworzeniu ekranu) zrób: ui_Rotate = lv_btn_create(ui_scrMain); lv_obj_set_size(ui_Rotate, 48, 48); lv_obj_align(ui_Rotate, LV_ALIGN_BOTTOM_RIGHT, -8, -8); lv_obj_t *lbl = lv_label_create(ui_Rotate); lv_label_set_text(lbl, "⟳"); lv_obj_center(lbl); lv_obj_add_event_cb(ui_Rotate, ui_event_Rotate, LV_EVENT_CLICKED, NULL);
+
+I zachowaj wygenerowaną funkcję ui_event_Rotate (już jest).
+
+================================ Co dokładnie przenieść z obecnego projektu
+Prototyp/ deklaracja: OnRotateClicked (lub nowy zestaw rotation_button_create / rotation_btn_event_cb).
+Kod handlera obracania (logika inkrementacji i lv_display_set_rotation).
+Utworzenie przycisku (lv_btn_create + label + event_cb).
+(Opcjonalnie) wpis ui_Rotate w ui.h jeśli chcesz dostęp globalny.
+(Jeżeli generujesz przez SquareLine) – zachowaj pattern: ui_event_X -> OnRotateClicked.
+Include: lvgl.h, (opcjonalnie) własny rotation.h.
+================================ Integracja w projekcie z podwójnym buforowaniem (PSRAM + DMA)
+Założenia: Masz dwa pełne bufory (front i back), LVGL renderuje do aktywnego (back), a flush callback startuje DMA na front. Kluczowe punkty:
+
+Software’owy obrót LVGL (lv_display_set_rotation) przelicza współrzędne logiczne – nie musisz modyfikować własnego kodu buforów, o ile flush otrzymuje area i mapę pikseli zgodną z bieżącą orientacją.
+Jeżeli Twój sterownik LCD używa sprzętowego rejestru rotacji (np. ILI9341 MADCTL / ST77xx), wybierz jedną strategię: A) Całość przez LVGL (prosto – nic w sterowniku nie zmieniasz w locie) B) Sprzętowa rotacja: w handlerze oprócz lv_display_set_rotation zaktualizuj MADCTL oraz (jeśli brak auto) zamień hor_res <-> ver_res w strukturze display drivera (tylko przy 90/270). W LVGL 9 raczej utrzymuj spójność – jeśli ustawiasz hardware, możesz pozostawić LVGL rotation = NONE i jedynie przeładować layout (bardziej zaawansowane, wymaga ostrożności).
+Synchronizacja z DMA:
+
+Nie zmieniaj rotacji gdy DMA wysyła poprzednią ramkę: ustaw dma_busy = true tuż przed rozpoczęciem transferu w flush, a w callbacku końca DMA (np. spi/dma completion ISR) ustaw dma_busy = false i jeśli zapamiętane było pending rotation – wykonaj je.
+Przy pełnym buforze możesz wymusić pełne odświeżenie po zmianie: lv_obj_invalidate(lv_screen_active()) albo lv_refr_now(disp).
+Przykład szkicu flush (pseudokod): void my_flush_cb(lv_display_t * disp, const lv_area_t * area, uint8_t * px_map) { dma_busy = true; start_dma_transfer(area, px_map, on_dma_done); } void on_dma_done() { dma_busy = false; lv_display_flush_ready(lv_display_get_default()); if(pending_rotation){ do_rotation(); pending_rotation = false; } }
+
+Jeśli buforowanie = 2 pełne bufory:
+
+lv_display_set_buffers(disp, buf1, buf2, hor_res * ver_res * sizeof(lv_color_t), LV_DISPLAY_RENDER_MODE_FULL);
+Rotacja logiczna nadal działa, LVGL rysuje już w poprawnie “przemapowany” layout.
+================================ Edge cases / zalecenia
+Przycisk w rogu po obrocie: Jeśli używasz lv_obj_align(btn, LV_ALIGN_BOTTOM_RIGHT, ...), LVGL przeliczy to po zmianie rotacji automatycznie – w razie problemów wywołaj lv_obj_update_layout(lv_screen_active()).
+Czcionki / custom draw: Nie wymagają zmian.
+Własne obliczenia szerokości / wysokości: używaj lv_display_get_horizontal_resolution(disp) i lv_display_get_vertical_resolution(disp) po obrocie (mogą się logicznie zamienić przy rotacji 90/270).
+Animacje w trakcie obrotu – mogą “podskoczyć”: rozważ wstrzymanie (lv_anim_del_all) i restart po obrocie, jeśli występują artefakty.
+================================ Szybka checklista przeniesienia
+[ ] Skopiuj rotation.h / rotation.c (lub OnRotateClicked) do nowego projektu (np. do src/ui/). [ ] Dodaj do build (PlatformIO automatycznie zaciąga z src/). [ ] W głównej inicjalizacji po lv_init() i konfiguracji wyświetlacza: utwórz główny ekran i wywołaj rotation_button_create(lv_scr_act()) (lub w screen_init). [ ] Jeśli używasz DMA – dodaj flagi dma_busy / pending_rotation (opcjonalnie). [ ] Przetestuj: klik kolejno 4 razy -> pełny obrót cykliczny 0/90/180/270. [ ] Zweryfikuj brak artefaktów w flush (jeśli są – sprawdź czy sterownik nie nakłada dodatkowej rotacji sprzętowej równolegle do software’owej).
+
+================================ Test manualny
+Uruchom projekt – ekran startowy orientacja 0°.
+Naciśnij przycisk – oczekuj 90° zmiany i przeskalowania elementów.
+Sprawdź czy dotyk (jeśli jest) mapuje poprawnie – jeżeli nie, w warstwie touch (transform współrzędnych) uwzględnij lv_disp_get_rotation(disp) i przelicz X/Y.
+================================ Opcjonalnie – obsługa sprzętowego obrotu (skrót)
+Zamiast lv_display_set_rotation możesz:
+Ustawić rejestr MADCTL (dla ILI9341: 0x36) z bitami MV / MX / MY.
+Zamienić logical hor_res / ver_res jeśli 90/270 (aktualizacja driver struct).
+Wywołać lv_obj_update_layout(lv_screen_active()).
+Zalecane tylko jeśli software’owa rotacja byłaby zbyt kosztowna (duże ekrany + brak wydajności).
+================================ Podsumowanie
+Do przeniesienia potrzebny jest tylko niewielki fragment: handler kliknięcia zmieniający enumerację rotacji oraz kod tworzący przycisk + event callback. W projekcie z podwójnym buforem PSRAM nic istotnego nie zmieniasz – dopilnuj jedynie, by obrót nie wchodził w konflikt z trwającym DMA (prosta flaga). Reszta interfejsu adaptuje się automatycznie jeśli używasz standardowego align/layout LVGL.
+
+Jeśli potrzebujesz wersji z kolejką oczekującego obrotu albo integracją z konkretnym sterownikiem LCD – daj znać.
