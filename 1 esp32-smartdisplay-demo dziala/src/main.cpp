@@ -2,6 +2,7 @@
 
 #include <esp32_smartdisplay.h>
 #include <ui/ui.h>
+#include "screen_rotation.h"
 
 void OnAddOneClicked(lv_event_t *e)
 {
@@ -12,9 +13,8 @@ void OnAddOneClicked(lv_event_t *e)
 
 void OnRotateClicked(lv_event_t *e)
 {
-    auto disp = lv_disp_get_default();
-    auto rotation = (lv_display_rotation_t)((lv_disp_get_rotation(disp) + 1) % (LV_DISPLAY_ROTATION_270 + 1));
-    lv_display_set_rotation(disp, rotation);
+    // Użyj wyizolowanej funkcji z modułu screen_rotation
+    rotate_screen_to_next_orientation(e);
 }
 
 void setup()
