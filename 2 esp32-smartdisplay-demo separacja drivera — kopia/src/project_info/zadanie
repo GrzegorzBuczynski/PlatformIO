@@ -1,0 +1,3 @@
+założenie jest że separujemy logike inicjacji lvgl, drivera, konfiguracji chipa i podłoczenia lcd do osobnych plików w src. 
+nie modyfikujemy zewnętrznych bibliotek, jesli potrzebujemy zmian piszemy własną implementacje o innym prototypie.
+napraw istniejacy błąd kompilacji.
