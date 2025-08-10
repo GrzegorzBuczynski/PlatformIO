@@ -1,0 +1,40 @@
+/* --- Scene Controller --- */
+/* Hide the radio buttons */
+#scene-boot-radio,
+#scene-desktop-radio,
+#scene-shutdown-radio {
+    display: none;
+}
+
+/* By default, hide all scenes */
+.scene {
+    display: none;
+}
+
+/* Show the active scene based on the checked radio button */
+#scene-boot-radio:checked ~ #scene-boot {
+    display: block;
+}
+
+#scene-desktop-radio:checked ~ #scene-desktop {
+    display: block;
+}
+
+#scene-shutdown-radio:checked ~ #scene-shutdown {
+    display: block;
+}
+
+/* --- Shutdown Scene Specifics --- */
+/* When the shutdown scene is active, make its components visible */
+#scene-shutdown-radio:checked ~ #scene-shutdown > #shutdown-screen {
+    display: flex;
+    visibility: visible;
+    opacity: 1;
+    animation: shutdownHide 1.3s linear forwards;
+}
+
+#scene-shutdown-radio:checked ~ #scene-shutdown > #post-shutdown {
+    display: block;
+    visibility: hidden;
+    animation: postShow 0s linear 1s forwards;
+}

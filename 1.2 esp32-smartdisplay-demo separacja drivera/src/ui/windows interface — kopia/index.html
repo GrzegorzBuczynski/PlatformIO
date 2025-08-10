@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulpit Windows XP</title>
+    <!-- Separated CSS by functionality -->
+    <link rel="stylesheet" href="base.css" />
+    <link rel="stylesheet" href="taskbar.css" />
+    <link rel="stylesheet" href="startmenu.css" />
+    <link rel="stylesheet" href="overlay.css" />
+    <link rel="stylesheet" href="boot.css" />
+    <!-- Shutdown (rozbity na moduły) -->
+    <link rel="stylesheet" href="shutdown-toggle.css" />
+    <link rel="stylesheet" href="shutdown-overlay.css" />
+    <link rel="stylesheet" href="shutdown-animations.css" />
+    <link rel="stylesheet" href="shutdown-post.css" />
+    <link rel="stylesheet" href="tips.css" />
+</head>
+<body>
+    <div id="boot-screen" aria-hidden="true"></div>
+    <!-- Checkbox sterujący menu Start (CSS-only) -->
+    <input type="checkbox" id="start-toggle" aria-hidden="true" />
+    <!-- Checkbox sterujący wskazówkami -->
+    <input type="checkbox" id="tips-toggle" aria-hidden="true" />
+    <!-- Checkbox sterujący wyłączeniem (CSS only) -->
+    <input type="checkbox" id="shutdown-toggle" aria-hidden="true" />
+    <!-- Ikona (przycisk) wskazówek -->
+    <label for="tips-toggle" class="tips-icon" title="Włącz krótki komunikat wskazówek">I</label>
+
+    <div class="desktop">
+        <button class="icon" type="button">
+            <img src="my-computer2.png" alt="Mój komputer"> <!-- Zastąp własną ikoną -->
+            <p>Mój komputer</p>
+        </button>
+        <button class="icon" type="button">
+            <img src="kosz2.png" alt="Kosz">
+            <p>Kosz</p>
+        </button>
+        <button class="icon" type="button">
+            <img src="my-documents.png" alt="Moje dokumenty"> <!-- Zastąp własną ikoną -->
+            <p>Moje dokumenty</p>
+        </button>
+        <!-- Dodaj więcej ikon według potrzeb -->
+    </div>
+    <!-- Toast wskazówki (1s) -->
+    <div class="toast-tip" aria-live="polite">Wskazówki włączone, dotknij elementu by uzyskać wskazówkę</div>
+    <div class="toast-tip-off" aria-live="polite">Wskazówki wyłączone</div>
+
+    <div class="taskbar">
+        <label class="start-button" for="start-toggle">Start</label>
+        <div class="taskbar-icons">
+            <!-- Przykładowe otwarte aplikacje -->
+            <div>Internet Explorer</div>
+            <div>Notatnik</div>
+        </div>
+        <div class="clock">20:00</div>
+    </div>
+
+    <!-- Menu Start -->
+    <div class="start-menu-wrapper" aria-hidden="true">
+        <nav class="start-menu" aria-label="Menu Start">
+            <div class="start-left">
+                <div class="logo-area">Windows<br>XP</div>
+                <div class="user-box">
+                    <img src="user-avatar.png" alt="Użytkownik">
+                    Użytkownik<br><strong>Administrator</strong>
+                </div>
+            </div>
+            <div class="start-right">
+                <div class="start-section">Programy</div>
+                <ul class="program-list">
+                    <li>Internet Explorer</li>
+                    <li>Outlook Express</li>
+                    <li>Windows Media Player</li>
+                    <li>Notatnik</li>
+                    <li>Paint</li>
+                    <li>Kalkulator</li>
+                    <li>Eksplorator</li>
+                    <li>WordPad</li>
+                </ul>
+                <div class="start-section">Ustawienia</div>
+                <ul class="program-list" style="grid-template-columns:1fr;">
+                    <li>Panel sterowania</li>
+                    <li>Połączenia sieciowe</li>
+                    <li>Drukarki i faksy</li>
+                </ul>
+                <div class="bottom-strip">
+                    <label for="shutdown-toggle" class="btn-flat" style="background:#ffcfb0; border-color:#b05a2a; cursor:pointer;">Zamknij</label>
+                    <span class="btn-flat" style="background:#ffe7a8;">Wyloguj</span>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Overlay do zamknięcia -->
+    <div class="overlay-dismiss"><label for="start-toggle" aria-label="Zamknij menu Start"></label></div>
+    <div id="shutdown-screen" aria-hidden="true"></div>
+    <!-- Ekran po zamknięciu – kliknij w dowolne miejsce aby uruchomić ponownie -->
+    <a id="post-shutdown" href="" aria-label="Uruchom ponownie (przeładuj stronę)"></a>
+</body>
+</html>

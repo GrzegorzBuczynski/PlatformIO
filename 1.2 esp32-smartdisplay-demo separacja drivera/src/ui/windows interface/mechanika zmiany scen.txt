@@ -1,0 +1,33 @@
+Na podstawie analizy pliku HTML i plików CSS, oto zwięzły opis mechanizmu przejść między scenami:
+
+Mechanizm przejść między scenami
+System wykorzystuje checkboxy HTML z ukrytymi labelami do sterowania scenami w czystym CSS, bez JavaScript:
+
+1. Ekran rozruchu (Boot)
+Automatyczny - wyświetla się przy załadowaniu strony
+Animacja CSS bootHide (2.5s) ukrywa ekran po czasie
+Tło z GIF-em boot-screen.gif
+2. Pulpit główny
+Domyślny stan po zakończeniu boot screen
+Zawiera ikony, pasek zadań i przycisk Start
+3. Menu Start
+Sterowane przez #start-toggle checkbox
+:checked pseudoklasa w CSS pokazuje/ukrywa menu
+Animacja slide-up z transformacją i opacity
+Overlay dismiss umożliwia zamknięcie kliknięciem poza menu
+4. Ekran wyłączania
+Uruchamiany przez #shutdown-toggle checkbox (przycisk "Zamknij")
+Sekwencja animacji:
+Natychmiastowe pojawienie ekranu shutdown
+Animacja shutdownHide (1.3s) z obrazem Shutdown.png
+Po zakończeniu -> przejście do post-shutdown
+5. Post-shutdown
+Czarny ekran z linkiem do przeładowania strony
+Cały ekran jest klikalny (<a> tag)
+Symuluje restart systemu
+Kluczowe elementy:
+
+Checkboxy ukryte (clip-path: inset(50%)) jako przełączniki stanu
+CSS transitions/animations do płynnych przejść
+Z-index layering (boot: 1000, shutdown: 1600, menu: 300)
+Pseudo-elementy (::before, ::after) do obrazów tła

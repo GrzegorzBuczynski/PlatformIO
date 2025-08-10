@@ -1,0 +1,3 @@
+/* Overlay dismiss & tips placeholder note */
+.overlay-dismiss { position:fixed; inset:0; background:rgba(0,0,0,0); pointer-events:none; transition:.25s; z-index:200; }
+#start-toggle:checked ~ .overlay-dismiss { pointer-events:auto; background:rgba(0,0,0,.15); }

@@ -1,0 +1,15 @@
+/* Shutdown overlay – rebuilt to mirror boot.css pattern (pure CSS) */
+/* Ukryty checkbox sterujący (dostępny dla :checked selektorów) */
+#shutdown-toggle { position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0; clip:rect(0 0 0 0); clip-path:inset(50%); overflow:hidden; white-space:nowrap; }
+
+/* Overlay wyłączenia – czarne tło + obraz (contain) wycentrowany jak w boot */
+#shutdown-screen { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#000; z-index:1600; opacity:0; visibility:hidden; pointer-events:none; }
+/* Obraz jako pseudo-element, dopasowany (contain) */
+#shutdown-screen::before { content:""; position:absolute; inset:0; background:url('Shutdown.png') center center / contain no-repeat; }
+
+/* Animacja: natychmiast pokazuje ekran, trzyma przez 92%, potem znika (2s) */
+#shutdown-toggle:checked ~ #shutdown-screen { animation:shutdownHide 1.3s linear forwards; }
+@keyframes shutdownHide { 0% {opacity:1; visibility:visible; pointer-events:auto;} 92% {opacity:1;} 100% {opacity:0; visibility:hidden; pointer-events:none;} }
+
+/* Podpis jak w XP (opcjonalny; pozostaje jeśli obraz się nie załaduje) */
+#shutdown-screen::after { content:"Wyłączanie systemu..."; position:absolute; bottom:8%; left:50%; transform:translateX(-50%); font:18px 'Tahoma', sans-serif; color:#d0d8e0; letter-spacing:.5px; text-shadow:0 2px 4px #000; opacity:.9; z-index:1; }
