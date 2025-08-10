@@ -18,12 +18,9 @@ void setup()
     log_i("Free PSRAM: %d bytes", ESP.getPsramSize());
     log_i("SDK version: %s", ESP.getSdkVersion());
 
-    lvgl_driver_init();
-
-    __attribute__((unused)) auto disp = lv_disp_get_default();
-    // lv_disp_set_rotation(disp, LV_DISP_ROT_90);
-    // lv_disp_set_rotation(disp, LV_DISP_ROT_180);
-    // lv_disp_set_rotation(disp, LV_DISP_ROT_270);
+    // Create driver instance (initializes LVGL + hardware)
+    static LvglDriver driver;
+    driver.setRotation(LV_DISPLAY_ROTATION_180);
 
     ui_init();
 

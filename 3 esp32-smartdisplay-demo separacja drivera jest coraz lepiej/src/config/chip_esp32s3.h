@@ -1,0 +1,12 @@
+#ifndef CHIP_ESP32S3_H
+#define CHIP_ESP32S3_H
+
+// Generic ESP32-S3 configuration
+#define ARDUINO_ESP32S3_DEV
+#define BOARD_HAS_PSRAM
+#define ARDUINO_USB_MODE 1
+#define ARDUINO_RUNNING_CORE 1
+#define ARDUINO_EVENT_RUNNING_CORE 1
+#define ARDUINO_USB_CDC_ON_BOOT 0
+
+#endif // CHIP_ESP32S3_H
